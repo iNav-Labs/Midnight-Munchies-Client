@@ -1,0 +1,32 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "midnight-munchies-adc86",
+          "appId": "1:44734305698:android:32b1d95930020548c60efb",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "midnight-munchies-adc86",
+          "configurations": {
+            "android": "1:44734305698:android:32b1d95930020548c60efb",
+            "ios": "1:44734305698:ios:1b7601dfe5c74507c60efb",
+            "web": "1:44734305698:web:84eb534d9b5dc4ddc60efb"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "site": "midnight-munchies-adc86",
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}
