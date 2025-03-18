@@ -1,12 +1,9 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'package:midnightmunchies/components/general/divider.dart';
 import 'package:midnightmunchies/screens/splash_screen.dart';
 import 'package:razorpay_web/razorpay_web.dart';
@@ -124,26 +121,26 @@ class _BillingScreenState extends State<BillingScreen>
     });
   }
 
-  // void _handlePaymentSuccess(PaymentSuccessResponse response) {
-  //   if (kDebugMode) {
-  //     print("Payment Successful: ${response.paymentId}");
-  //   }
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    if (kDebugMode) {
+      print("Payment Successful: ${response.paymentId}");
+    }
 
-  //   // Navigate to SplashScreen after payment success
-  //   Navigator.pushReplacement(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder:
-  //           (context) => SplashScreen(
-  //             orderItems: orderItems,
-  //             billDetails: billDetails,
-  //             name: _nameController.text,
-  //             phone: _phoneController.text,
-  //             hostel: _selectedHostel ?? '',
-  //           ),
-  //     ),
-  //   );
-  // }
+    // Navigate to SplashScreen after payment success
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => SplashScreen(
+              orderItems: orderItems,
+              billDetails: billDetails,
+              name: _nameController.text,
+              phone: _phoneController.text,
+              hostel: _selectedHostel ?? '',
+            ),
+      ),
+    );
+  }
 
   void _handlePaymentError(PaymentFailureResponse response) {
     print("Payment Failed: ${response.code} - ${response.message}");
@@ -157,105 +154,6 @@ class _BillingScreenState extends State<BillingScreen>
       print("External Wallet Selected: ${response.walletName}");
     }
   }
-
-  // Callback when Razorpay payment is successful
-  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
-    if (kDebugMode) {
-      print("Payment successful: ${response.paymentId}");
-    }
-
-    // Step 1: Save order details in Firestore
-    DocumentReference orderRef = await FirebaseFirestore.instance
-        .collection('orders')
-        .add({
-          'userId': FirebaseAuth.instance.currentUser?.uid,
-          'items': orderItems,
-          'totalAmount': billDetails['total'],
-          'paymentId': response.paymentId,
-          'status': 'Paid',
-          'timestamp': FieldValue.serverTimestamp(),
-        });
-
-    // Step 2: Fetch admin FCM token
-    DocumentSnapshot adminSnapshot =
-        await FirebaseFirestore.instance
-            .collection('admin_tokens')
-            .doc('admin')
-            .get();
-    if (adminSnapshot.exists) {
-      String? adminToken = adminSnapshot['token'];
-
-      // Step 3: Send notification to admin
-      await sendPushNotification(adminToken!, orderRef.id);
-    }
-  }
-
-  // void _handlePayment() {
-  //   if (kDebugMode) {
-  //     print("Place Order button pressed");
-  //   }
-
-  //   if (orderItems.isEmpty) {
-  //     if (kDebugMode) {
-  //       print("Order items are empty, payment not triggered");
-  //     }
-  //     return;
-  //   }
-
-  //   if (_formKey.currentState?.validate() ?? false) {
-  //     if (kDebugMode) {
-  //       print("Form validated successfully");
-  //     }
-
-  //     double totalAmount = billDetails['total'];
-  //     if (totalAmount <= 0) {
-  //       if (kDebugMode) {
-  //         print("Invalid total amount: $totalAmount");
-  //       }
-  //       ScaffoldMessenger.of(
-  //         context,
-  //       ).showSnackBar(SnackBar(content: Text("Invalid order amount")));
-  //       return;
-  //     }
-
-  //     var options = {
-  //       'key': 'rzp_test_S9ikUUcVXnwtWZ', // Ensure this is correct
-  //       'amount': (totalAmount * 100).toInt(), // Convert to paisa
-  //       'currency': 'INR',
-  //       'name': 'Midnight Munchies',
-  //       'description': 'Food Order Payment',
-  //       'prefill': {
-  //         'contact': _phoneController.text,
-  //         'email': FirebaseAuth.instance.currentUser?.email ?? "",
-  //       },
-  //       'method': {
-  //         'upi': true, // Enables UPI as a payment method
-  //       },
-  //       'external': {
-  //         'wallets': ['paytm'],
-  //       },
-  //     };
-
-  //     if (kDebugMode) {
-  //       print("Opening Razorpay with options: $options");
-  //     }
-
-  //     try {
-  //       _razorpay.open(options);
-  //     } catch (e) {
-  //       if (kDebugMode) {
-  //         print("Error opening Razorpay: $e");
-  //       }
-  //       ScaffoldMessenger.of(
-  //         context,
-  //       ).showSnackBar(SnackBar(content: Text("Error opening Razorpay: $e")));
-  //     }
-  //   } else {
-  //     if (kDebugMode) {
-  //       print("Form validation failed");
-  //     }
-  //   }
-  // }
 
   void _handlePayment() {
     if (kDebugMode) {
@@ -281,12 +179,12 @@ class _BillingScreenState extends State<BillingScreen>
         }
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text("Invalid order amount")));
+        ).showSnackBar(SnackBar(content: Text("Invalid order amount")));
         return;
       }
 
       var options = {
-        'key': 'rzp_test_S9ikUUcVXnwtWZ',
+        'key': 'rzp_test_S9ikUUcVXnwtWZ', // Ensure this is correct
         'amount': (totalAmount * 100).toInt(), // Convert to paisa
         'currency': 'INR',
         'name': 'Midnight Munchies',
@@ -295,7 +193,9 @@ class _BillingScreenState extends State<BillingScreen>
           'contact': _phoneController.text,
           'email': FirebaseAuth.instance.currentUser?.email ?? "",
         },
-        'method': {'upi': true},
+        'method': {
+          'upi': true, // Enables UPI as a payment method
+        },
         'external': {
           'wallets': ['paytm'],
         },
@@ -320,31 +220,6 @@ class _BillingScreenState extends State<BillingScreen>
         print("Form validation failed");
       }
     }
-  }
-
-  // Function to send FCM push notification
-  Future<void> sendPushNotification(String adminToken, String orderId) async {
-    const String serverKey =
-        "YOUR_FIREBASE_SERVER_KEY"; // Get from Firebase Console (Cloud Messaging)
-    final Uri url = Uri.parse('https://fcm.googleapis.com/fcm/send');
-
-    final Map<String, dynamic> notificationData = {
-      "to": adminToken,
-      "notification": {
-        "title": "New Order Received",
-        "body": "Order #$orderId has been placed successfully!",
-        "sound": "default",
-      },
-    };
-
-    await http.post(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "key=$serverKey",
-      },
-      body: jsonEncode(notificationData),
-    );
   }
 
   Future<void> _getUserDetails() async {

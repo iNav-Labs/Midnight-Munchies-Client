@@ -51,19 +51,39 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.forward();
 
     Future.delayed(Duration(seconds: 3), () async {
-      final orderItems =
-          widget.orderItems
-              .map(
-                (item) => {
-                  'name': item['name'],
-                  'count': item['count'],
-                  'price': item['price'],
-                },
-              )
-              .toList();
+      // Fetch Hindi names for all items
+      List<Map<String, dynamic>> orderItemsWithHindi = [];
+
+      await Future.wait(
+        widget.orderItems.map((item) async {
+          // Query Firestore to get the Hindi name for this item
+          final itemName = item['name'];
+          final querySnapshot =
+              await FirebaseFirestore.instance
+                  .collection('items')
+                  .where('name', isEqualTo: itemName)
+                  .limit(1)
+                  .get();
+
+          String hindiName = '';
+          if (querySnapshot.docs.isNotEmpty) {
+            hindiName = querySnapshot.docs.first.data()['hindiName'] ?? '';
+          }
+
+          // Add the item with Hindi name to the list
+          orderItemsWithHindi.add({
+            'name': item['name'],
+            'count': item['count'],
+            'price': item['price'],
+            'hindiName': hindiName,
+          });
+        }),
+      );
+
+      // Now create the order with the Hindi names included
       await FirebaseFirestore.instance.collection('orders').add({
         'email': FirebaseAuth.instance.currentUser?.email,
-        'items': orderItems,
+        'items': orderItemsWithHindi,
         'billDetails': widget.billDetails,
         'name': widget.name,
         'phone': widget.phone,
