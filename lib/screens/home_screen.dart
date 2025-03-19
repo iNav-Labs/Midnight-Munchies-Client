@@ -1,7 +1,7 @@
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:marquee/marquee.dart';
 import 'package:midnightmunchies/components/general/appbar_app.dart';
 import 'package:midnightmunchies/components/general/bottom_nav_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,6 +18,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   List<Map<String, dynamic>> _foodItems = [];
   late final AnimationController _listController;
   bool isShopOpen = true;
+  bool showBanner = false;
+  late Timer _timer;
+
   @override
   void initState() {
     super.initState();
@@ -27,12 +30,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
     _loadFoodItems();
     _loadStatus();
+    _checkBannerVisibility();
+
+    // Update banner visibility every minute
+    _timer = Timer.periodic(const Duration(minutes: 1), (timer) {
+      _checkBannerVisibility();
+    });
   }
 
   @override
   void dispose() {
     _shopStatusSubscription.cancel();
     _listController.dispose();
+    _timer.cancel();
     super.dispose();
   }
 
@@ -118,6 +128,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     });
   }
 
+  void _checkBannerVisibility() {
+    final now = TimeOfDay.now();
+    setState(() {
+      showBanner = (now.hour == 23 && now.minute >= 0) || (now.hour == 0);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -130,6 +147,32 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       body: SafeArea(
         child: Column(
           children: [
+            if (showBanner)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Container(
+                  height: 40,
+                  color: Colors.red.shade800,
+                  child: Marquee(
+                    text: "⚠️ No New Order Will Be Taken After 11:30 PM ⚠️",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                    scrollAxis: Axis.horizontal,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    blankSpace: 50.0,
+                    velocity: 50.0,
+                    pauseAfterRound: Duration(seconds: 1),
+                    startPadding: 10.0,
+                    accelerationDuration: Duration(seconds: 1),
+                    accelerationCurve: Curves.linear,
+                    decelerationDuration: Duration(seconds: 1),
+                    decelerationCurve: Curves.easeOut,
+                  ),
+                ),
+              ),
             Expanded(
               child:
                   _foodItems.isEmpty

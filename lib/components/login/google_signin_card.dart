@@ -183,23 +183,22 @@ class _GoogleSignInCardState extends State<GoogleSignInCard> {
     );
   }
 
-Widget _buildGoogleSignInButton() {
-  return Align(
-    alignment: Alignment.center,
-    child: SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: (GoogleSignInPlatform.instance as web.GoogleSignInPlugin)
-          .renderButton(
-            configuration: web.GSIButtonConfiguration(
-              theme: web.GSIButtonTheme.filledBlue,
-              size: web.GSIButtonSize.large,
+  Widget _buildGoogleSignInButton() {
+    return Align(
+      alignment: Alignment.center,
+      child: SizedBox(
+        width: double.infinity,
+        height: 50,
+        child: (GoogleSignInPlatform.instance as web.GoogleSignInPlugin)
+            .renderButton(
+              configuration: web.GSIButtonConfiguration(
+                theme: web.GSIButtonTheme.filledBlue,
+                size: web.GSIButtonSize.large,
+              ),
             ),
-          ),
-    ),
-  );
-}
-
+      ),
+    );
+  }
 
   Widget _buildFeatureRow(IconData icon, String text) {
     return Padding(

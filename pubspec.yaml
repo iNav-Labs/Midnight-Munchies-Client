@@ -41,6 +41,7 @@ dependencies:
   font_awesome_flutter: ^10.8.0
   dropdown_button2: ^2.3.9
   google_sign_in_platform_interface: ^2.5.0
+  marquee: ^2.3.0
 
 dev_dependencies:
   flutter_test:

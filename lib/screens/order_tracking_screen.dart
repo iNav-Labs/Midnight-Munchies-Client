@@ -13,9 +13,7 @@ class OrderTrackingScreen extends StatefulWidget {
 class _OrderTrackingScreenState extends State<OrderTrackingScreen>
     with TickerProviderStateMixin {
   static const primaryColor = Color(0xFF6552FF); // Green for success/delivery
-  static const accentColor = Color(
-    0xFF6552FF,
-  ); // Purple for interactive elements
+// Purple for interactive elements
   static const backgroundColor = Colors.white;
   static const textDarkColor = Color(0xFF1C1E21);
   static const textLightColor = Color(0xFF65676B);
@@ -47,12 +45,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
       {'title': 'On the Way', 'completed': true},
       {'title': 'Delivered', 'completed': false},
     ],
-    'billDetails': {
-      'subtotal': 210,
-      'deliveryCharge': 0,
-      'tax': 0,
-      'total': 210,
-    },
+    'billDetails': {'subtotal': 210, 'total': 210},
   };
   @override
   void initState() {
@@ -195,26 +188,6 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
     );
   }
 
-  Widget _buildDividerWithText(String text) {
-    return Row(
-      children: [
-        Expanded(child: Divider(color: Colors.grey[300])),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            text,
-            style: GoogleFonts.poppins(
-              fontSize: 14,
-              color: Colors.grey[500],
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-        Expanded(child: Divider(color: Colors.grey[300])),
-      ],
-    );
-  }
-
   Widget _buildOrderItems() {
     return Container(
       padding: EdgeInsets.all(16),
@@ -329,12 +302,6 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
                     orderData['billDetails']['subtotal'],
                   ),
                   SizedBox(height: 8),
-                  _buildBillRow(
-                    'Delivery Charge',
-                    orderData['billDetails']['deliveryCharge'],
-                  ),
-                  SizedBox(height: 8),
-                  _buildBillRow('Tax', orderData['billDetails']['tax']),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 12),
                     child: Divider(height: 1, color: Color(0xFFE4E6EB)),
@@ -373,106 +340,6 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildContactCards() {
-    return Column(
-      children: [
-        _buildContactCard(
-          title: 'Delivery Partner',
-          name: orderData['deliveryPerson']['name'],
-          message: orderData['deliveryPerson']['subtitle'],
-          icon: Icons.delivery_dining,
-          phone: orderData['deliveryPerson']['phone'],
-        ),
-        SizedBox(height: 16),
-        _buildContactCard(
-          title: 'Restaurant',
-          name: orderData['restaurant']['name'],
-          message: orderData['restaurant']['subtitle'],
-          icon: Icons.restaurant,
-          phone: orderData['restaurant']['phone'],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildContactCard({
-    required String title,
-    required String name,
-    required String message,
-    required IconData icon,
-    required String phone,
-  }) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: accentColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: accentColor),
-          ),
-          SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: '$title | ',
-                        style: GoogleFonts.poppins(
-                          color: textDarkColor,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
-                      ),
-                      TextSpan(
-                        text: name,
-                        style: GoogleFonts.poppins(
-                          color: textDarkColor,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  message,
-                  style: GoogleFonts.poppins(
-                    fontSize: 12,
-                    color: textLightColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              color: accentColor,
-              shape: BoxShape.circle,
-            ),
-            child: IconButton(
-              icon: Icon(Icons.phone, color: Colors.white, size: 20),
-              onPressed: () {
-                // Implement phone call functionality
-              },
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

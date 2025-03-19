@@ -39,12 +39,7 @@ class _BillingScreenState extends State<BillingScreen>
   static const dividerColor = Color(0xFFE4E6EB);
 
   List<Map<String, dynamic>> orderItems = [];
-  Map<String, dynamic> billDetails = {
-    'subtotal': 0.0,
-    'deliveryCharge': 0.0,
-    'tax': 0.0,
-    'total': 0.0,
-  };
+  Map<String, dynamic> billDetails = {'subtotal': 0.0, 'total': 0.0};
 
   String? _selectedHostel;
   List<String> _hostels = [];
@@ -54,14 +49,10 @@ class _BillingScreenState extends State<BillingScreen>
       return adding + (item['price'] as double) * (item['count'] as int);
     });
 
-    double deliveryCharge = subtotal > 0 ? 2.99 : 0.0;
-    double tax = subtotal * 0.10;
-    double total = subtotal + deliveryCharge + tax;
+    double total = subtotal;
 
     return {
       'subtotal': double.parse(subtotal.toStringAsFixed(2)),
-      'deliveryCharge': double.parse(deliveryCharge.toStringAsFixed(2)),
-      'tax': double.parse(tax.toStringAsFixed(2)),
       'total': double.parse(total.toStringAsFixed(2)),
     };
   }
@@ -195,9 +186,10 @@ class _BillingScreenState extends State<BillingScreen>
         },
         'method': {
           'upi': true, // Enables UPI as a payment method
-        },
-        'external': {
-          'wallets': ['paytm'],
+          'card': false, // Disables card payment
+          'netbanking': false, // Disables net banking
+          'wallet': false, // Disables wallets
+          'paylater': false, // Disables Pay Later
         },
       };
 
@@ -253,9 +245,7 @@ class _BillingScreenState extends State<BillingScreen>
 
     setState(() {
       billDetails['subtotal'] = subtotal;
-      billDetails['tax'] = subtotal * 0.1; // 10% tax
-      billDetails['total'] =
-          subtotal + billDetails['deliveryCharge'] + billDetails['tax'];
+      billDetails['total'] = subtotal;
     });
   }
 
@@ -730,12 +720,6 @@ class _BillingScreenState extends State<BillingScreen>
                   SizedBox(height: 16),
                   _buildBillRow('Subtotal', billDetails['subtotal']),
                   SizedBox(height: 8),
-                  _buildBillRow(
-                    'Delivery Charge',
-                    billDetails['deliveryCharge'],
-                  ),
-                  SizedBox(height: 8),
-                  _buildBillRow('Tax', billDetails['tax']),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 12),
                     child: Divider(height: 1, color: dividerColor),
@@ -799,7 +783,7 @@ class _BillingScreenState extends State<BillingScreen>
                 ),
                 SizedBox(height: 4),
                 Text(
-                  'Order cannot be cancelled once placed. Payment will be collected on delivery.',
+                  'Order cannot be cancelled once placed.',
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     color: primaryColor,
