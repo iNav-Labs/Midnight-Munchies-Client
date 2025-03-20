@@ -190,6 +190,7 @@ class _BillingScreenState extends State<BillingScreen>
           'netbanking': false, // Disables net banking
           'wallet': false, // Disables wallets
           'paylater': false, // Disables Pay Later
+          'emi': false, // Disables EMI
         },
       };
 

@@ -1,3 +1,347 @@
+// import 'package:flutter/material.dart';
+// import 'package:google_fonts/google_fonts.dart';
+// import 'package:midnightmunchies/components/general/divider.dart';
+
+// class OrderTrackingScreen extends StatefulWidget {
+//   const OrderTrackingScreen({super.key});
+
+//   @override
+//   // ignore: library_private_types_in_public_api
+//   _OrderTrackingScreenState createState() => _OrderTrackingScreenState();
+// }
+
+// class _OrderTrackingScreenState extends State<OrderTrackingScreen>
+//     with TickerProviderStateMixin {
+//   static const primaryColor = Color(0xFF6552FF); // Green for success/delivery
+//   // Purple for interactive elements
+//   static const backgroundColor = Colors.white;
+//   static const textDarkColor = Color(0xFF1C1E21);
+//   static const textLightColor = Color(0xFF65676B);
+//   bool _isBillExpanded = false;
+//   late AnimationController _animationController;
+
+//   final Map orderData = {
+//     'orderStatus': 'Order is on the way',
+//     'estimatedTime': '16min',
+//     'restaurant': {
+//       'name': "Tomato's Diner",
+//       'phone': '+1 234 567 8900',
+//       'subtitle': 'Call for any order related inquiry',
+//     },
+//     'deliveryPerson': {
+//       'name': 'Dhirubhai Ambani',
+//       'phone': '+1 234 567 8901',
+//       'subtitle': 'Feel free to call for order updates',
+//     },
+//     'orderItems': [
+//       {'name': 'FarmHouse Pizza', 'count': 1, 'price': 105},
+//       {'name': 'Alfredo Pasta', 'count': 1, 'price': 105},
+//     ],
+//     'deliveryAddress': '47, Radhe Homes, Kudasan',
+//     'total': 210,
+//     'orderSteps': [
+//       {'title': 'Order Confirmed', 'completed': true},
+//       {'title': 'Preparing', 'completed': true},
+//       {'title': 'On the Way', 'completed': true},
+//       {'title': 'Delivered', 'completed': false},
+//     ],
+//     'billDetails': {'subtotal': 210, 'total': 210},
+//   };
+//   @override
+//   void initState() {
+//     super.initState();
+
+//     _animationController = AnimationController(
+//       duration: Duration(milliseconds: 200),
+//       vsync: this,
+//     );
+//     Future.microtask(() {
+//       final args =
+//           // ignore: use_build_context_synchronously
+//           ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+//       setState(() {
+//         orderData['orderItems'] = args['orderItems'];
+//         orderData['deliveryAddress'] = args['hostel'];
+//         orderData['billDetails'] = args['billDetails'];
+//       });
+//     });
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: backgroundColor,
+//       body: SingleChildScrollView(
+//         child: Column(
+//           children: [
+//             _buildHeader(),
+//             Padding(
+//               padding: EdgeInsets.all(16),
+//               child: Column(
+//                 children: [
+//                   SizedBox(height: 30),
+//                   CustomDivider(text: 'Order Tracking'),
+//                   SizedBox(height: 20),
+//                   _buildOrderItems(),
+//                   SizedBox(height: 24),
+//                   _buildBillDetails(),
+//                   // _buildContactCards(),
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+
+//   Widget _buildHeader() {
+//     return Container(
+//       width: double.infinity,
+//       decoration: BoxDecoration(
+//         color: primaryColor,
+//         borderRadius: BorderRadius.only(
+//           bottomLeft: Radius.circular(24),
+//           bottomRight: Radius.circular(24),
+//         ),
+//       ),
+//       child: SafeArea(
+//         child: Padding(
+//           padding: EdgeInsets.all(16),
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.center,
+//             children: [
+//               Row(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: [
+//                   IconButton(
+//                     icon: Icon(Icons.arrow_back, color: Colors.white),
+//                     onPressed:
+//                         () => Navigator.pushReplacementNamed(context, '/home'),
+//                   ),
+//                   Text(
+//                     'Delivering at Hostel',
+//                     style: GoogleFonts.poppins(
+//                       color: Colors.white,
+//                       fontSize: 16,
+//                       fontWeight: FontWeight.w500,
+//                     ),
+//                   ),
+//                   Text(
+//                     ' | ',
+//                     style: GoogleFonts.poppins(color: Colors.white70),
+//                   ),
+//                   Expanded(
+//                     child: Text(
+//                       orderData['deliveryAddress'],
+//                       style: GoogleFonts.poppins(
+//                         color: Colors.white70,
+//                         fontSize: 14,
+//                       ),
+//                       textAlign: TextAlign.center,
+//                       overflow: TextOverflow.ellipsis,
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//               SizedBox(height: 24),
+//               Text(
+//                 orderData['orderStatus'],
+//                 textAlign: TextAlign.center,
+//                 style: GoogleFonts.poppins(
+//                   color: Colors.white,
+//                   fontSize: 24,
+//                   fontWeight: FontWeight.bold,
+//                 ),
+//               ),
+//               SizedBox(height: 16),
+//               Center(
+//                 child: Container(
+//                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+//                   decoration: BoxDecoration(
+//                     color: Colors.white.withOpacity(0.2),
+//                     borderRadius: BorderRadius.circular(20),
+//                   ),
+//                   child: Row(
+//                     mainAxisSize: MainAxisSize.min,
+//                     mainAxisAlignment: MainAxisAlignment.center,
+//                     children: [
+//                       Text(
+//                         'Arriving in 20-30 min',
+//                         style: GoogleFonts.poppins(
+//                           color: Colors.white,
+//                           fontSize: 16,
+//                           fontWeight: FontWeight.w500,
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//               SizedBox(height: 16),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+
+//   Widget _buildOrderItems() {
+//     return Container(
+//       padding: EdgeInsets.all(16),
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.circular(12),
+//         border: Border.all(color: Colors.grey[200]!),
+//       ),
+//       child: Column(
+//         children:
+//             orderData['orderItems'].map<Widget>((item) {
+//               return Padding(
+//                 padding: EdgeInsets.symmetric(vertical: 8),
+//                 child: Row(
+//                   children: [
+//                     SizedBox(width: 12),
+//                     Expanded(
+//                       child: Text(
+//                         item['name'],
+//                         style: GoogleFonts.poppins(
+//                           fontSize: 16,
+//                           color: textDarkColor,
+//                         ),
+//                       ),
+//                     ),
+//                     Text(
+//                       '${item['count']} x Rs. ${item['price']}',
+//                       style: GoogleFonts.poppins(
+//                         fontSize: 14,
+//                         color: textLightColor,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               );
+//             }).toList(),
+//       ),
+//     );
+//   }
+
+//   Widget _buildBillDetails() {
+//     return Container(
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.circular(12),
+//         boxShadow: [
+//           BoxShadow(
+//             color: Colors.black.withOpacity(0.05),
+//             blurRadius: 10,
+//             offset: Offset(0, 2),
+//           ),
+//         ],
+//       ),
+//       child: Column(
+//         children: [
+//           InkWell(
+//             onTap: () {
+//               setState(() => _isBillExpanded = !_isBillExpanded);
+//               _isBillExpanded
+//                   ? _animationController.forward()
+//                   : _animationController.reverse();
+//             },
+//             child: Padding(
+//               padding: EdgeInsets.all(16),
+//               child: Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                 children: [
+//                   Text(
+//                     'Bill Details',
+//                     style: GoogleFonts.poppins(
+//                       fontSize: 16,
+//                       fontWeight: FontWeight.w600,
+//                       color: textDarkColor,
+//                     ),
+//                   ),
+//                   Row(
+//                     children: [
+//                       Text(
+//                         "₹${orderData['billDetails']['total'].toStringAsFixed(2)}",
+//                         style: GoogleFonts.poppins(
+//                           fontSize: 16,
+//                           fontWeight: FontWeight.w600,
+//                           color: primaryColor,
+//                         ),
+//                       ),
+//                       SizedBox(width: 4),
+//                       RotationTransition(
+//                         turns: Tween(
+//                           begin: 0.0,
+//                           end: 0.5,
+//                         ).animate(_animationController),
+//                         child: Icon(
+//                           Icons.keyboard_arrow_down,
+//                           color: textLightColor,
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//           if (_isBillExpanded)
+//             Padding(
+//               padding: EdgeInsets.all(16),
+//               child: Column(
+//                 children: [
+//                   Divider(height: 1, color: Color(0xFFE4E6EB)),
+//                   SizedBox(height: 16),
+//                   _buildBillRow(
+//                     'Subtotal',
+//                     orderData['billDetails']['subtotal'],
+//                   ),
+//                   SizedBox(height: 8),
+//                   Padding(
+//                     padding: EdgeInsets.symmetric(vertical: 12),
+//                     child: Divider(height: 1, color: Color(0xFFE4E6EB)),
+//                   ),
+//                   _buildBillRow(
+//                     'Total',
+//                     orderData['billDetails']['total'],
+//                     isTotal: true,
+//                   ),
+//                 ],
+//               ),
+//             ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   Widget _buildBillRow(String label, double amount, {bool isTotal = false}) {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         Text(
+//           label,
+//           style: GoogleFonts.poppins(
+//             fontSize: isTotal ? 15 : 14,
+//             fontWeight: isTotal ? FontWeight.w600 : FontWeight.w400,
+//             color: isTotal ? Colors.black : textLightColor,
+//           ),
+//         ),
+//         Text(
+//           '₹${amount.toStringAsFixed(2)}',
+//           style: GoogleFonts.poppins(
+//             fontSize: isTotal ? 15 : 14,
+//             fontWeight: isTotal ? FontWeight.w600 : FontWeight.w400,
+//             color: isTotal ? primaryColor : Colors.black,
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:midnightmunchies/components/general/divider.dart';
@@ -13,40 +357,15 @@ class OrderTrackingScreen extends StatefulWidget {
 class _OrderTrackingScreenState extends State<OrderTrackingScreen>
     with TickerProviderStateMixin {
   static const primaryColor = Color(0xFF6552FF); // Green for success/delivery
-// Purple for interactive elements
+  // Purple for interactive elements
   static const backgroundColor = Colors.white;
   static const textDarkColor = Color(0xFF1C1E21);
   static const textLightColor = Color(0xFF65676B);
   bool _isBillExpanded = false;
   late AnimationController _animationController;
 
-  final Map orderData = {
-    'orderStatus': 'Order is on the way',
-    'estimatedTime': '16min',
-    'restaurant': {
-      'name': "Tomato's Diner",
-      'phone': '+1 234 567 8900',
-      'subtitle': 'Call for any order related inquiry',
-    },
-    'deliveryPerson': {
-      'name': 'Dhirubhai Ambani',
-      'phone': '+1 234 567 8901',
-      'subtitle': 'Feel free to call for order updates',
-    },
-    'orderItems': [
-      {'name': 'FarmHouse Pizza', 'count': 1, 'price': 105},
-      {'name': 'Alfredo Pasta', 'count': 1, 'price': 105},
-    ],
-    'deliveryAddress': '47, Radhe Homes, Kudasan',
-    'total': 210,
-    'orderSteps': [
-      {'title': 'Order Confirmed', 'completed': true},
-      {'title': 'Preparing', 'completed': true},
-      {'title': 'On the Way', 'completed': true},
-      {'title': 'Delivered', 'completed': false},
-    ],
-    'billDetails': {'subtotal': 210, 'total': 210},
-  };
+  Map orderData = {};
+
   @override
   void initState() {
     super.initState();
@@ -63,6 +382,13 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
         orderData['orderItems'] = args['orderItems'];
         orderData['deliveryAddress'] = args['hostel'];
         orderData['billDetails'] = args['billDetails'];
+        orderData['orderStatus'] = 'Order is on the way';
+        orderData['orderSteps'] = [
+          {'title': 'Order Confirmed', 'completed': true},
+          {'title': 'Preparing', 'completed': true},
+          {'title': 'On the Way', 'completed': true},
+          {'title': 'Delivered', 'completed': false},
+        ];
       });
     });
   }
@@ -133,7 +459,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
                   ),
                   Expanded(
                     child: Text(
-                      orderData['deliveryAddress'],
+                      orderData['deliveryAddress'] ?? '',
                       style: GoogleFonts.poppins(
                         color: Colors.white70,
                         fontSize: 14,
@@ -146,7 +472,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
               ),
               SizedBox(height: 24),
               Text(
-                orderData['orderStatus'],
+                orderData['orderStatus'] ?? 'Processing Order',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.poppins(
                   color: Colors.white,
@@ -174,8 +500,6 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      SizedBox(width: 8),
-                      Icon(Icons.refresh, color: Colors.white, size: 20),
                     ],
                   ),
                 ),
@@ -198,32 +522,34 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
       ),
       child: Column(
         children:
-            orderData['orderItems'].map<Widget>((item) {
-              return Padding(
-                padding: EdgeInsets.symmetric(vertical: 8),
-                child: Row(
-                  children: [
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        item['name'],
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          color: textDarkColor,
+            orderData.containsKey('orderItems')
+                ? (orderData['orderItems'] as List).map<Widget>((item) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: Row(
+                      children: [
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            item['name'],
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              color: textDarkColor,
+                            ),
+                          ),
                         ),
-                      ),
+                        Text(
+                          '${item['count']} x Rs. ${item['price']}',
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            color: textLightColor,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      '${item['count']} x Rs. ${item['price']}',
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        color: textLightColor,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
+                  );
+                }).toList()
+                : [],
       ),
     );
   }
@@ -266,7 +592,9 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
                   Row(
                     children: [
                       Text(
-                        "₹${orderData['billDetails']['total'].toStringAsFixed(2)}",
+                        orderData.containsKey('billDetails')
+                            ? "₹${orderData['billDetails']['total'].toStringAsFixed(2)}"
+                            : "₹0.00",
                         style: GoogleFonts.poppins(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -290,7 +618,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
               ),
             ),
           ),
-          if (_isBillExpanded)
+          if (_isBillExpanded && orderData.containsKey('billDetails'))
             Padding(
               padding: EdgeInsets.all(16),
               child: Column(
@@ -299,7 +627,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
                   SizedBox(height: 16),
                   _buildBillRow(
                     'Subtotal',
-                    orderData['billDetails']['subtotal'],
+                    orderData['billDetails']['subtotal'] ?? 0.0,
                   ),
                   SizedBox(height: 8),
                   Padding(
@@ -308,7 +636,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
                   ),
                   _buildBillRow(
                     'Total',
-                    orderData['billDetails']['total'],
+                    orderData['billDetails']['total'] ?? 0.0,
                     isTotal: true,
                   ),
                 ],
