@@ -20,6 +20,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   bool isShopOpen = true;
   bool showBanner = false;
   late Timer _timer;
+  String _selectedCategory = "All"; // Default category is "All"
+  List<String> _categories = ["All"]; // Initialize with "All" category
 
   @override
   void initState() {
@@ -86,6 +88,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 ),
               };
             }).toList();
+
+        // Extract unique categories from food items
+        _extractCategories();
       });
       _listController.forward();
     } catch (e) {
@@ -96,18 +101,51 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
   }
 
+  // Extract unique categories from food items
+  void _extractCategories() {
+    Set<String> uniqueCategories = {"All"};
+    for (var item in _foodItems) {
+      if (item.containsKey('category') && item['category'] != null) {
+        uniqueCategories.add(item['category'] as String);
+      }
+    }
+    _categories = uniqueCategories.toList();
+  }
+
+  // Filter items based on selected category
+  List<Map<String, dynamic>> _getFilteredItems() {
+    if (_selectedCategory == "All") {
+      return _foodItems;
+    } else {
+      return _foodItems
+          .where((item) => item['category'] == _selectedCategory)
+          .toList();
+    }
+  }
+
   void _incrementItem(int index) {
-    if (_foodItems[index]['available']) {
+    // Find the actual index in the _foodItems list
+    final filteredItems = _getFilteredItems();
+    final item = filteredItems[index];
+    final originalIndex = _foodItems.indexOf(item);
+
+    if (_foodItems[originalIndex]['available']) {
       setState(() {
-        _foodItems[index]['count']++;
+        _foodItems[originalIndex]['count']++;
       });
     }
   }
 
   void _decrementItem(int index) {
-    if (_foodItems[index]['available'] && _foodItems[index]['count'] > 0) {
+    // Find the actual index in the _foodItems list
+    final filteredItems = _getFilteredItems();
+    final item = filteredItems[index];
+    final originalIndex = _foodItems.indexOf(item);
+
+    if (_foodItems[originalIndex]['available'] &&
+        _foodItems[originalIndex]['count'] > 0) {
       setState(() {
-        _foodItems[index]['count']--;
+        _foodItems[originalIndex]['count']--;
       });
     }
   }
@@ -137,6 +175,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final filteredItems = _getFilteredItems();
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
@@ -173,15 +213,52 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ),
                 ),
               ),
+
+            // Category selector horizontal scrollable list
+            Container(
+              height: 60,
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                itemCount: _categories.length,
+                itemBuilder: (context, index) {
+                  final category = _categories[index];
+                  final isSelected = category == _selectedCategory;
+
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: ChoiceChip(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      label: Text(category),
+                      selected: isSelected,
+                      selectedColor: Theme.of(
+                        context,
+                      ).primaryColor.withOpacity(0.7),
+                      onSelected: (selected) {
+                        if (selected) {
+                          setState(() {
+                            _selectedCategory = category;
+                          });
+                        }
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+
             Expanded(
               child:
                   _foodItems.isEmpty
                       ? const Center(child: CircularProgressIndicator())
                       : ListView.builder(
                         padding: const EdgeInsets.only(top: 16.0, bottom: 80.0),
-                        itemCount: _foodItems.length,
+                        itemCount: filteredItems.length,
                         itemBuilder: (context, index) {
-                          final item = _foodItems[index];
+                          final item = filteredItems[index];
                           final isAvailable = item['available'] as bool;
 
                           return FadeTransition(

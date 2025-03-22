@@ -92,6 +92,7 @@ class _SplashScreenState extends State<SplashScreen>
         'status': 'cooking',
         'price': widget.billDetails['total'],
       });
+      print(orderItemsWithHindi);
 
       Navigator.pushReplacementNamed(
         context,
